@@ -1,5 +1,4 @@
 -- Insertar un par de filas en la tabla JOB.
----- Consultar aca si es posible realizar todo en una misma consulta, ya que APEX no me deja hacerlo.
 INSERT INTO JOB (JOB_ID, FUNCTION)
 VALUES (673, 'ADVOCATE')
 
@@ -29,7 +28,7 @@ WHERE CUSTOMER_ID = 104
 -- Crear un SAVEPOINT B.
 SAVEPOINT B;
 -- Hacer un ROLLBACK hasta el último SAVEPOINT creado.
-ROLLBACK TO SAVEPOINT B; -- Aca funciona de algo? Por que luego del B no hice nada, por lo tanto no tiene sentido ir ahi, tendria mas sentido ir al savepoint A, no?
+ROLLBACK TO SAVEPOINT B;
 -- Hacer un SELECT de toda la tabla CUSTOMER
 SELECT * FROM CUSTOMER
 -- Si quiero que la primera modificación del nombre de un cliente que hice quede asentada definitivamente en la base, debo hacer algo?.
