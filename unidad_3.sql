@@ -125,4 +125,36 @@ BEGIN
         END;
     END IF;
 END;
-
+-- Crear un bloque que pida un número de empleado y muestre su apellido y nombre y tantos ‘*’ como resulte de dividir su salario por 100.
+DECLARE
+    V_employee_id EMPLOYEE.EMPLOYEE_ID%TYPE := :employee_id;
+    V_first_name EMPLOYEE.FIRST_NAME%TYPE;
+    V_last_name EMPLOYEE.LAST_NAME%TYPE;
+    V_salary EMPLOYEE.SALARY%TYPE;
+    V_count NUMBER;
+BEGIN
+    SELECT FIRST_NAME, LAST_NAME, SALARY INTO V_first_name, V_last_name, V_salary
+    FROM EMPLOYEE
+    WHERE EMPLOYEE_ID = V_employee_id;
+    
+    V_count := V_salary / 100;
+    
+    DBMS_OUTPUT.PUT_LINE(V_first_name || ' ' || V_last_name || ' ' || RPAD('*', V_count, '*'));
+END;
+-- Hacer un bloque que guarde en las posiciones pares de una tabla en memoria (tabla Pl/Sql) de números enteros el múltiplo de 2 de la posición. 
+-- Ejemplo: T(4) := 8. Ingresar la cantidad de elementos que debe tener la tabla. Por último desplegar la cantidad de elementos que tiene la tabla y todo su contenido.
+DECLARE
+    TYPE T_tabla IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;
+    V_tabla T_tabla;
+    V_n NUMBER := :n;
+BEGIN  
+    FOR i IN 1..V_n LOOP
+        V_tabla(i) := i * 2;
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('Cantidad de elementos: ' || V_tabla.COUNT);
+    
+    FOR i IN 1..V_tabla.COUNT LOOP
+        DBMS_OUTPUT.PUT_LINE(V_tabla(i));
+    END LOOP;
+END;
