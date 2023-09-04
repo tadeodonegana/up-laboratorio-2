@@ -96,3 +96,33 @@ BEGIN
     END IF;
 END;
 
+-- Ingresar un número de departamento n y mostrar el nombre del departamento y la cantidad de empleados que trabajan en él.
+-- Si no tiene empleados sacar un mensaje “Sin empleados” 
+-- Si tiene entre 1 y 10 empleados desplegar “Normal”
+-- Si tiene más de 10 empleados, desplegar “Muchos”
+DECLARE
+    V_department_id DEPARTMENT.DEPARTMENT_ID%TYPE := :department_id;
+    V_department_name DEPARTMENT.NAME%TYPE;
+    V_count NUMBER;
+BEGIN
+    SELECT D.NAME, COUNT(E.EMPLOYEE_ID) INTO V_department_name, V_count
+    FROM DEPARTMENT D
+    JOIN EMPLOYEE E ON D.DEPARTMENT_ID = E.DEPARTMENT_ID
+    WHERE D.DEPARTMENT_ID = V_department_id
+    GROUP BY D.NAME;
+    
+    IF V_count = 0 THEN
+        BEGIN
+            DBMS_OUTPUT.PUT_LINE('Sin Empleados');
+        END;
+    ELSIF V_count BETWEEN 1 AND 10 THEN
+        BEGIN
+            DBMS_OUTPUT.PUT_LINE('Normal');
+        END;
+    ELSE
+        BEGIN
+            DBMS_OUTPUT.PUT_LINE('Muchos');
+        END;
+    END IF;
+END;
+
