@@ -69,3 +69,31 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('El promedio de salarios de los empleados fue: ' || v_prom_salarios);
     DBMS_OUTPUT.PUT_LINE('La cantidad de empleados del departamento 10 fue: ' || v_cantidad_empleados);
 END;
+
+-- Crear un procedure que permita actualizar (Sumar $100) el salario de un empleado si este tiene un salario menor al promedio del departamento en el que trabaja.
+CREATE OR REPLACE
+PROCEDURE actualiza_salario(pi_employee_id NUMBER)
+IS
+    v_departamento NUMBER;
+    v_salario NUMBER;
+    v_promedio_salarios NUMBER;
+BEGIN
+    SELECT salary, department_id INTO v_salario, v_departamento
+    FROM EMPLOYEE
+    WHERE employee_id = pi_employee_id;
+
+    -- Llamamos a la funcion creada anteriormente
+    v_promedio_salarios:= f_prom_salary(v_departamento);
+    
+    -- Si el salario del empleado es menor al promedio del depto, actualizo
+    IF v_salario < v_promedio_salarios THEN
+        UPDATE EMPLOYEE SET salary = salary + 100 WHERE employee_id = pi_employee_id;
+        DBMS_OUTPUT.PUT_LINE('El salario del empleado ha sido actualizado');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('El salario del empleado no ha sido actualizado, porque no correspondia');
+    END IF;
+END;
+-- Probamos el procedure
+BEGIN
+actualiza_salario(7900);
+END;
