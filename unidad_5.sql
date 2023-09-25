@@ -73,3 +73,63 @@ BEGIN
     END LOOP;
 END;
 
+/*
+Escribir una función que recibe como parámetro un nombre de una función (function) y retorna su ID (job_id) o cancela 
+con excepciones propias indicando el error en elmensaje del error.
+
+a. Contemplar todo error posible.
+*/
+
+-- Funcion que retorna el id de la funcion pasada por parametro.
+CREATE OR REPLACE FUNCTION get_function_id(p_nombre JOB.FUNCTION%TYPE)
+RETURN NUMBER
+IS
+    v_function_id JOB.JOB_ID%TYPE;
+BEGIN
+    SELECT JOB_ID INTO v_function_id
+    FROM JOB
+    WHERE FUNCTION = p_nombre;
+
+    RETURN v_function_id;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20001, 'No existe una funcion con ese nombre.');
+END;
+
+-- Bloque anonimo para probar la funcion.
+DECLARE
+    v_nombre JOB.FUNCTION%TYPE := :nombre;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('ID:' || get_function_id(v_nombre));
+END;
+
+-- Escribir un procedimiento que permite modificar la función de un empleado.
+-- Procedimiento que recibe ID del empleado a modificar y el nombre de la nueva funcion que recibira.
+CREATE OR REPLACE PROCEDURE modificar_funcion_empleado(p_id_empleado IN EMPLOYEE.EMPLOYEE_ID%TYPE, p_funcion IN JOB.FUNCTION%TYPE)
+IS
+    -- Obtengo el id de la funcion pasada por parametro.
+    v_id_funcion JOB.JOB_ID%TYPE := get_function_id(p_funcion);
+    -- Defino una excepcion por si no existe una funcion con ese nombre.
+    e_no_data_found EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_no_data_found, -20001);
+    e_no_employee_found EXCEPTION;
+    PRAGMA EXCEPTION_INIT(e_no_employee_found, -20002);
+BEGIN
+    UPDATE EMPLOYEE
+    SET JOB_ID = v_id_funcion
+    WHERE EMPLOYEE_ID = p_id_empleado;
+    -- Controlo que se haya realizado el update.
+    IF SQL%NOTFOUND THEN
+        RAISE_APPLICATION_ERROR(-20002, 'No existe un empleado con ese ID');
+    ELSE 
+        DBMS_OUTPUT.PUT_LINE('El empleado se ha actualizado correctamente');
+    END IF;
+EXCEPTION
+    WHEN e_no_employee_found THEN
+        DBMS_OUTPUT.PUT_LINE('No existe un empleado con ese ID');
+    WHEN e_no_data_found THEN
+        DBMS_OUTPUT.PUT_LINE('No existe una funcion con ese nombre.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Error desconocido');
+END;
